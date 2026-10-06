@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: espera
-        run: sleep 55
+      - name: espera pages
+        run: sleep 60
       - name: verifica
         run: |
           {
@@ -20,14 +20,14 @@ jobs:
               code=$(curl -s -o /tmp/b -w "%{http_code}" -L "https://lh434534.github.io/skynetchat/$f")
               echo "  /$f -> $code ($(wc -c < /tmp/b) bytes)"
             done
-            echo "--- titulo ---"
+            echo "--- titulo servido ---"
             curl -s -L https://lh434534.github.io/skynetchat/ | grep -o '<title>.*</title>' | head -1
-            echo "--- presets no catalogo ---"
-            curl -s -L https://lh434534.github.io/skynetchat/ | grep -c 'nm:"' || true
+            echo "--- ferramentas no catalogo ---"
+            curl -s -L https://lh434534.github.io/skynetchat/ | grep -c '{id:"' || true
           } > check.txt 2>&1
       - name: publica
         run: |
-          git config user.name c; git config user.email c@b.local
+          git config user.name c-bot; git config user.email c@b.local
           git add check.txt
           git diff --cached --quiet || git commit -m "check"
           git push
