@@ -3,103 +3,116 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0d11">
+<meta name="theme-color" content="#0f1115">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>SkynetChat — IA local, sem intermediário</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SkynetChat — assistente single-file</title>
 <style>
 :root{
-  --bg:#0b0d11;--panel:#11141a;--card:#161a22;--line:#232833;
-  --fg:#e9edf3;--dim:#8b95a7;--acc:#7dd3fc;--acc2:#a78bfa;--ok:#4ade80;--err:#f87171;--warn:#fbbf24;
-  --r:14px;--sb:env(safe-area-inset-bottom,0px);
+  --bg:#0f1115; --panel:#151922; --card:#1a1f2b; --line:#252b38;
+  --fg:#e8ecf2; --dim:#98a2b3; --acc:#5eead4; --acc2:#60a5fa; --warn:#fbbf24; --err:#f87171;
+  --r:14px; --safe-b:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: light){
-  :root{--bg:#f6f7f9;--panel:#fff;--card:#fff;--line:#e2e6ed;--fg:#12161d;--dim:#586274;--acc:#0284c7;--acc2:#7c3aed}
+  :root{--bg:#f7f8fa;--panel:#fff;--card:#fff;--line:#e3e6ec;--fg:#14181f;--dim:#5b6473;--acc:#0d9488;--acc2:#2563eb}
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif}
-#app{display:flex;flex-direction:column;height:100dvh;max-width:860px;margin:0 auto;position:relative}
-header{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:20}
-.brand{font-weight:800;font-size:17px;letter-spacing:.2px}
-.brand span{color:var(--acc2)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--err);flex:none}
-.dot.on{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.dot.wait{background:var(--warn)}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;overscroll-behavior-y:none}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:820px;margin:0 auto;position:relative}
+header{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:20}
+.brand{font-weight:800;letter-spacing:.2px;font-size:17px}
+.brand span{color:var(--acc)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--dim);margin-left:2px}
+.dot.on{background:var(--acc);box-shadow:0 0 8px var(--acc)}
 .spacer{flex:1}
-.ib{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:10px;
-    min-width:38px;height:34px;cursor:pointer;font-size:15px;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
-.ib:active{transform:scale(.94)}
-nav{display:flex;gap:4px;padding:6px 8px;background:var(--panel);border-bottom:1px solid var(--line)}
+.iconbtn{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:10px;
+  min-width:38px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px}
+.iconbtn:active{transform:scale(.94)}
+nav{display:none;gap:4px;padding:6px 8px;background:var(--panel);border-bottom:1px solid var(--line)}
 nav button{flex:1;background:transparent;border:0;color:var(--dim);padding:8px;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer}
 nav button.on{background:var(--card);color:var(--fg)}
-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px calc(96px + var(--sb))}
-.msg{display:flex;margin-bottom:10px}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px calc(96px + var(--safe-b))}
+main.chatpad{padding-bottom:calc(110px + var(--safe-b))}
+.msg{max-width:100%;margin-bottom:10px;display:flex}
 .msg.me{justify-content:flex-end}
-.bub{max-width:88%;padding:10px 13px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);
-     white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
-.msg.me .bub{background:var(--acc2);color:#fff;border-color:transparent;font-weight:500}
-.bub b{color:var(--acc)}
-.bub code{background:rgba(127,127,127,.2);padding:1px 5px;border-radius:5px;font-size:13px}
-.bub pre{background:rgba(127,127,127,.14);padding:10px;border-radius:10px;overflow-x:auto}
-.bub pre code{background:none;padding:0}
-.bub a{color:var(--acc)}
-.bub ul{margin:6px 0;padding-left:20px}
-.cur{border-left:2px solid var(--acc2)}
-.meta{font-size:11px;color:var(--dim);margin-top:6px;font-variant-numeric:tabular-nums}
+.bubble{max-width:86%;padding:10px 13px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);
+  white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+.msg.me .bubble{background:var(--acc);color:#04120f;border-color:transparent;font-weight:500}
+.bubble.tool{background:transparent;border:1px dashed var(--line);color:var(--dim);font-size:13px}
+.bubble b{color:var(--acc2)}
+.bubble code{background:rgba(127,127,127,.18);padding:1px 5px;border-radius:5px;font-size:13px}
+.bubble pre{background:rgba(127,127,127,.12);padding:10px;border-radius:10px;overflow-x:auto}
+.bubble a{color:var(--acc2)}
+.bubble ul{margin:6px 0;padding-left:20px}
+.thinking{display:inline-flex;gap:4px;align-items:center;color:var(--dim);font-size:13px}
+.thinking i{width:5px;height:5px;border-radius:50%;background:var(--dim);animation:b 1s infinite}
+@keyframes b{0%,60%,100%{opacity:.25}30%{opacity:1}}
 .composer{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
-  padding:8px 10px calc(8px + var(--sb));display:flex;gap:8px;align-items:flex-end;z-index:30}
+  padding:8px 10px calc(8px + var(--safe-b));display:flex;gap:8px;align-items:flex-end;z-index:30}
 textarea{flex:1;resize:none;border:1px solid var(--line);background:var(--card);color:var(--fg);
-  border-radius:12px;padding:10px 12px;font:inherit;max-height:130px;min-height:42px;outline:none}
-textarea:focus{border-color:var(--acc2)}
-.send{background:var(--acc2);color:#fff;border:0;border-radius:12px;height:42px;min-width:56px;font-weight:800;cursor:pointer}
+  border-radius:12px;padding:10px 12px;font:inherit;max-height:120px;min-height:42px;outline:none}
+textarea:focus{border-color:var(--acc)}
+.send{background:var(--acc);color:#04120f;border:0;border-radius:12px;height:42px;min-width:52px;font-weight:800;cursor:pointer}
 .send:disabled{opacity:.4}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px;cursor:pointer;position:relative}
+.tile:active{transform:scale(.98)}
+.tile h4{margin:0 0 4px;font-size:13px}
+.tile p{margin:0;font-size:11.5px;color:var(--dim);line-height:1.4}
+.tile .st{position:absolute;top:8px;right:8px;font-size:10px;padding:2px 6px;border-radius:20px;background:var(--line);color:var(--dim)}
+.tile .st.ok{background:rgba(94,234,212,.16);color:var(--acc)}
+.tile .st.no{background:rgba(248,113,113,.16);color:var(--err)}
+.sec{margin-bottom:16px}
+.sec>h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin:0 0 8px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px}
-.card h3{margin:0 0 8px;font-size:14px}
 label{display:block;font-size:12px;color:var(--dim);margin:8px 0 4px}
-input,select,textarea.f{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--fg);
+input,select{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--fg);
   border-radius:10px;padding:9px 11px;font:inherit;outline:none}
-textarea.f{min-height:90px;resize:vertical}
 .row{display:flex;gap:8px}
 .row>*{flex:1}
-button.b{background:var(--acc2);color:#fff;border:0;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer;width:100%}
+button.b{background:var(--acc);color:#04120f;border:0;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer;width:100%}
 button.g{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:9px 12px;cursor:pointer;width:100%}
 .muted{color:var(--dim);font-size:12px;line-height:1.5}
 .kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .kv:last-child{border:0}
-.kv b{font-variant-numeric:tabular-nums;max-width:55%;text-align:right;word-break:break-all}
-.ep{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer;background:var(--panel)}
-.ep.on{border-color:var(--acc2)}
-.ep .nm{flex:1;font-weight:600;font-size:14px}
-.ep .st{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--line);color:var(--dim)}
-.ep .st.ok{background:rgba(74,222,128,.16);color:var(--ok)}
-.ep .st.no{background:rgba(248,113,113,.16);color:var(--err)}
+.kv b{font-variant-numeric:tabular-nums}
 .pill{display:inline-block;padding:3px 9px;border-radius:20px;background:var(--line);font-size:11px;color:var(--dim);margin:2px 4px 2px 0}
 .hidden{display:none!important}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + var(--sb));background:var(--fg);color:var(--bg);
+.copy{display:block;margin-top:8px;background:transparent;border:1px solid var(--line);
+  color:var(--dim);border-radius:8px;padding:3px 10px;font-size:11px;cursor:pointer}
+.copy:active{transform:scale(.95)}
+img.gen{width:100%;border-radius:12px;margin-top:8px;border:1px solid var(--line)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + var(--safe-b));background:var(--fg);color:var(--bg);
   padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;z-index:99;opacity:0;transition:.2s;pointer-events:none}
 .toast.on{opacity:1}
-.warnbox{border-left:3px solid var(--warn);padding:8px 10px;background:rgba(251,191,36,.08);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.5}
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <div class="brand">Skynet<span>Chat</span></div>
-    <div id="dot" class="dot" title="servidor de inferência"></div>
+    <div id="net" class="dot" title="conectividade"></div>
     <div class="spacer"></div>
-    <button class="ib" id="bStop" title="parar geração" hidden>⏹</button>
-    <button class="ib" id="bNew" title="nova conversa">＋</button>
-    <button class="ib" id="bMenu" title="painéis">☰</button>
+    <button class="iconbtn" id="btnVoice" title="falar">🎤</button>
+    <button class="iconbtn" id="btnStop" title="parar/sair do modo local" hidden>⏹</button>
+    <button class="iconbtn" id="btnNew" title="nova conversa">＋</button>
+    <button class="iconbtn" id="btnMenu" title="painéis">☰</button>
   </header>
+
   <nav id="nav">
-    <button data-t="chat" class="on">Chat</button>
-    <button data-t="modelo">Modelo</button>
-    <button data-t="ajustes">Ajustes</button>
-    <button data-t="diag">Diagnóstico</button>
+    <button data-tab="chat" class="on">Chat</button>
+    <button data-tab="tools">Ferramentas</button>
+    <button data-tab="status">Status</button>
+    <button data-tab="cfg">Ajustes</button>
   </nav>
-  <main id="main"><div id="chat"></div></main>
-  <div class="composer" id="comp">
-    <textarea id="txt" rows="1" placeholder="Conecte um servidor local na aba Modelo…"></textarea>
+
+  <main id="main" class="chatpad">
+    <div id="chat"></div>
+  </main>
+
+  <div class="composer" id="composer">
+    <textarea id="txt" rows="1" placeholder="Pergunte, ou peça: clima, bitcoin, dólar, wiki, notícias…"></textarea>
     <button class="send" id="send">Enviar</button>
   </div>
 </div>
@@ -107,404 +120,771 @@ button.g{background:transparent;border:1px solid var(--line);color:var(--fg);bor
 
 <script>
 "use strict";
-/* ============================================================================
-   SkynetChat — cliente de IA 100% local.
-
-   O que isto e:
-     uma interface para modelos que VOCE roda no SEU equipamento
-     (Ollama, LM Studio, llama.cpp, KoboldCpp, vLLM...). Nenhuma empresa
-     fica entre voce e o modelo: nao ha API de terceiro, nao ha chave,
-     nao ha telemetria. O prompt que voce escreve e o prompt que chega
-     ao modelo — inclusive o system prompt, que e seu.
-
-   O que isto NAO e:
-     nao e uma ferramenta para burlar protecoes de modelos de terceiros.
-     Modelos alheios (ChatGPT, Claude, Gemini) tem termos de uso e filtros
-     que pertencem a quem os opera; este app nao toca neles e nao inclui
-     biblioteca de jailbreak. O que da liberdade aqui e rodar o peso localmente.
-   ========================================================================== */
+/* =========================================================================
+   SkynetChat — 50 ferramentas reais, offline-first.
+   Principios:
+     - nenhuma dependencia externa (sem CDN, sem framework)
+     - toda chamada de rede tem timeout e degrada
+     - o autoteste mostra o que REALMENTE funciona no seu navegador
+     - chaves ficam so no localStorage deste dispositivo
+   ========================================================================= */
 
 const $ = s => document.querySelector(s);
-const txt = $("#txt"), main = $("#main"), chat = () => $("#chat");
-const LS = "skynet.v1";
+const txt = $("#txt"), main = $("#main");
+const chat = () => $("#chat");  // re-consulta: navTo substitui o DOM
+const LS = "skynetchat.v1";
 
 const state = load();
 function load(){
-  try{
-    return Object.assign({
-      ep:"", kind:"openai", model:"", system:"", convs:[], conv:0,
-      p:{temperature:0.8, top_p:0.9, top_k:40, repeat_penalty:1.1, num_ctx:8192, max_tokens:-1}
-    }, JSON.parse(localStorage.getItem(LS)||"{}"));
-  }catch(e){
-    return {ep:"",kind:"openai",model:"",system:"",convs:[[]],conv:0,
-      p:{temperature:0.8,top_p:0.9,top_k:40,repeat_penalty:1.1,num_ctx:8192,max_tokens:-1}};
-  }
+  try{ return Object.assign({msgs:[],keys:{},provider:"auto",voice:false,tests:{},model:""}, JSON.parse(localStorage.getItem(LS)||"{}")); }
+  catch(e){ return {msgs:[],keys:{},provider:"auto",voice:false,tests:{},model:""}; }
 }
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
-if(!state.convs || !state.convs.length) state.convs=[[]];
-const msgs = () => state.convs[state.conv] || (state.convs[state.conv]=[]);
 
-function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),1800); }
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),1600); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function md(s){
-  let h=esc(s);
-  h=h.replace(/```(\w*)\n?([\s\S]*?)```/g,(m,l,c)=>"<pre><code>"+c.replace(/\n$/,"")+"</code></pre>");
-  h=h.replace(/`([^`\n]+)`/g,"<code>$1</code>");
-  h=h.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
-  h=h.replace(/\*([^*\n]+)\*/g,"<i>$1</i>");
-  h=h.replace(/(^|\n)[-*] (.+)/g,"$1• $2");
-  h=h.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  let h = esc(s);
+  h = h.replace(/```([\s\S]*?)```/g,(m,c)=>"<pre><code>"+c.trim()+"</code></pre>");
+  h = h.replace(/`([^`\n]+)`/g,"<code>$1</code>");
+  h = h.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>");
+  h = h.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  h = h.replace(/(^|\n)[-*] (.+)/g,"$1• $2");
   return h;
 }
-function bub(cls, html){
+function bubble(cls, html){
   const d=document.createElement("div"); d.className="msg"+(cls?" "+cls:"");
-  const b=document.createElement("div"); b.className="bub"+(cls==="ai"?" cur":""); b.innerHTML=html;
-  d.appendChild(b); const c=chat(); if(c) c.appendChild(d);
-  main.scrollTop=main.scrollHeight; return b;
+  const b=document.createElement("div"); b.className="bubble"; b.innerHTML=html;
+  if(!cls) addCopy(b);
+  d.appendChild(b); chat().appendChild(d); main.scrollTop=main.scrollHeight; return b;
+}
+function thinking(label){
+  const b=bubble("", '<span class="thinking">'+esc(label)+' <i></i><i></i><i></i></span>');
+  return { el:b, done(html){
+    b.innerHTML=html;
+    // done() substitui o innerHTML: o botao copiar precisa ser recriado
+    if(!b.querySelector(".copy")) addCopy(b);
+    main.scrollTop=main.scrollHeight;
+  } };
+}
+function addCopy(b){
+  const c=document.createElement("button");
+  c.className="copy"; c.textContent="copiar"; c.title="copiar texto";
+  c.onclick=()=>{ navigator.clipboard?.writeText(b.innerText).then(()=>toast("copiado"),()=>toast("sem permissão")); };
+  b.appendChild(c);
 }
 
-/* ------------------------------------------------------------- PRESETS */
-const PRESETS = [
-  {id:"ollama",   nm:"Ollama",                base:"http://localhost:11434", kind:"ollama",
-   models:"/api/tags",              chat:"/api/chat"},
-  {id:"lmstudio", nm:"LM Studio",             base:"http://localhost:1234",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-  {id:"llamacpp", nm:"llama.cpp server",      base:"http://localhost:8080",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-  {id:"kobold",   nm:"KoboldCpp",             base:"http://localhost:5001",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-  {id:"textgen",  nm:"text-generation-webui", base:"http://localhost:5000",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-  {id:"vllm",     nm:"vLLM",                  base:"http://localhost:8000",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-  {id:"localai",  nm:"LocalAI",               base:"http://localhost:8080",  kind:"openai",
-   models:"/v1/models",             chat:"/v1/chat/completions"},
-];
-
-/* --------------------------------------------------------- CONECTIVIDADE */
-async function ping(base, path, ms=3500){
+/* ---------------------------------------------------------------- fetch util */
+async function jget(url, ms=9000){
   const c=new AbortController(); const t=setTimeout(()=>c.abort(), ms);
   try{
-    const r=await fetch(base+path,{signal:c.signal,headers:{Accept:"application/json"}});
-    return {ok:r.ok, code:r.status};
-  }catch(e){
-    return {ok:false, code:0, err: e.name==="AbortError" ? "timeout" : "bloqueado (CORS/rede)"};
+    const r=await fetch(url,{signal:c.signal,headers:{Accept:"application/json"}});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return await r.json();
   } finally { clearTimeout(t); }
 }
-async function listarModelos(){
-  if(!state.ep) return [];
+async function tget(url, ms=9000){
+  const c=new AbortController(); const t=setTimeout(()=>c.abort(), ms);
   try{
-    if(state.kind==="ollama"){
-      const c=new AbortController(); const t=setTimeout(()=>c.abort(),5000);
-      const r=await fetch(state.ep+"/api/tags",{signal:c.signal}); clearTimeout(t);
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      const d=await r.json();
-      return (d.models||[]).map(m=>m.name || m.model).filter(Boolean);
-    }
-    const c=new AbortController(); const t=setTimeout(()=>c.abort(),5000);
-    const r=await fetch(state.ep+"/v1/models",{signal:c.signal}); clearTimeout(t);
+    const r=await fetch(url,{signal:c.signal});
     if(!r.ok) throw new Error("HTTP "+r.status);
-    const d=await r.json();
-    return (d.data||[]).map(m=>m.id).filter(Boolean);
-  }catch(e){ toast("Falhou ao listar: "+e.message); return []; }
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+async function tries(fn, label){
+  const t=thinking(label||"consultando");
+  try{ const v=await fn(); return {t, v}; }
+  catch(e){ t.done("❌ "+esc(e.message||"falhou")); return {t, v:null}; }
 }
 
-/* --------------------------------------------------------- STREAM PARSERS */
-// OpenAI-compat: SSE, linhas "data: {...}" terminando em "data: [DONE]"
-async function streamOpenAI(url, body, onTok, signal){
-  const r=await fetch(url,{method:"POST",signal,
-    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  if(!r.ok){ const t=await r.text().catch(()=>""); throw new Error("HTTP "+r.status+" "+t.slice(0,140)); }
-  if(!r.body) throw new Error("resposta sem corpo (streaming desativado?)");
-  const rd=r.body.getReader(), dec=new TextDecoder(); let buf="";
-  while(true){
-    const {done,value}=await rd.read(); if(done) break;
-    buf+=dec.decode(value,{stream:true});
-    const ls=buf.split("\n"); buf=ls.pop();
-    for(const ln of ls){
-      const s=ln.trim();
-      if(!s.startsWith("data:")) continue;
-      const d=s.slice(5).trim();
-      if(d==="[DONE]") return;
-      try{ const j=JSON.parse(d); const c=j.choices?.[0]?.delta?.content; if(c) onTok(c); }catch(e){}
-    }
-  }
-}
-// Ollama nativo: NDJSON, {"message":{"content":"..."},"done":bool}
-async function streamOllama(url, body, onTok, signal){
-  const r=await fetch(url,{method:"POST",signal,
-    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  if(!r.ok){ const t=await r.text().catch(()=>""); throw new Error("HTTP "+r.status+" "+t.slice(0,140)); }
-  const rd=r.body.getReader(), dec=new TextDecoder(); let buf="";
-  while(true){
-    const {done,value}=await rd.read(); if(done) break;
-    buf+=dec.decode(value,{stream:true});
-    const ls=buf.split("\n"); buf=ls.pop();
-    for(const ln of ls){
-      if(!ln.trim()) continue;
-      try{
-        const j=JSON.parse(ln);
-        if(j.message && j.message.content) onTok(j.message.content);
-        if(j.done) return;
-      }catch(e){}
-    }
-  }
-}
+/* ============================================================ CATALOGO DE APIs
+   Endpoints publicos sem chave. `cors` e expectativa, NAO garantia:
+   o autoteste confirma no seu navegador.
+   ========================================================================= */
+const API = [
+  // -- clima & lugar -------------------------------------------------------
+  {id:"meteo", cat:"Clima", name:"Previsão do tempo", desc:"Open-Meteo: atual, horária e 7 dias", cors:true,
+   args:[{k:"q",label:"cidade",ph:"São Paulo"}],
+   run:async a=>{
+     const g=await jget("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(a.q||"São Paulo")+"&count=1&language=pt");
+     if(!g.results||!g.results[0]) throw new Error("cidade não encontrada");
+     const p=g.results[0];
+     const w=await jget(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&forecast_days=5`);
+     const W={0:"limpo",1:"quase limpo",2:"parcialmente nublado",3:"nublado",45:"neblina",48:"neblina",51:"garoa",53:"chuva fraca",55:"chuva moderada",61:"chuva fraca",63:"chuva",65:"chuva forte",80:"pancadas",81:"pancadas",82:"pancadas fortes",95:"tempestade"};
+     return `**${p.name}** (${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)})\n`+
+       `Agora: **${w.current.temperature_2m}°C** (sensação ${w.current.apparent_temperature}°C), ${W[w.current.weather_code]||"código "+w.current.weather_code}\n`+
+       `Umidade ${w.current.relative_humidity_2m}% · vento ${w.current.wind_speed_10m} km/h\n\n`+
+       `Próximos dias:\n`+ w.daily.time.map((d,i)=>`• ${d}: ${w.daily.temperature_2m_min[i]}°C → ${w.daily.temperature_2m_max[i]}°C`).join("\n");
+   }},
+  {id:"airq", cat:"Clima", name:"Qualidade do ar", desc:"Open-Meteo: PM2.5, PM10, ozônio", cors:true,
+   args:[{k:"q",label:"cidade",ph:"São Paulo"}],
+   run:async a=>{
+     const g=await jget("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(a.q||"São Paulo")+"&count=1&language=pt");
+     const p=g.results[0]; if(!p) throw new Error("cidade não encontrada");
+     const r=await jget(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${p.latitude}&longitude=${p.longitude}&current=pm10,pm2_5,carbon_monoxide,ozone,european_aqi&timezone=auto`);
+     const c=r.current;
+     return `**Qualidade do ar — ${p.name}**\n`+
+       `Índice europeu: **${c.european_aqi}**\n`+
+       `PM2.5: ${c.pm2_5} µg/m³ · PM10: ${c.pm10} µg/m³\n`+
+       `Ozônio: ${c.ozone} · CO: ${c.carbon_monoxide}`;
+   }},
+  {id:"ipgeo", cat:"Clima", name:"Geolocalizar meu IP", desc:"ipapi.co: onde a rede acha que você está", cors:true,
+   run:async()=>{ const r=await jget("https://ipapi.co/json/");
+     return `**Seu IP:** ${r.ip}\n${r.city}, ${r.region} — ${r.country_name}\n`+
+       `Lat/lon: ${r.latitude}, ${r.longitude}\nFuso: ${r.timezone} · moeda ${r.currency}`; }},
+  {id:"tz", cat:"Clima", name:"Hora exata por fuso", desc:"WorldTimeAPI", cors:true,
+   args:[{k:"z",label:"fuso",ph:"America/Sao_Paulo"}],
+   run:async a=>{ const r=await jget("https://worldtimeapi.org/api/timezone/"+(a.z||"America/Sao_Paulo"));
+     return `**${r.timezone}**\n${r.datetime}\nDia da semana: ${r.day_of_week} · ano ${r.day_of_year}/366`; }},
+  {id:"sun", cat:"Clima", name:"Nascer e pôr do sol", desc:"sunrise-sunset.org", cors:true,
+   args:[{k:"lat",label:"latitude",ph:"-23.55"},{k:"lon",label:"longitude",ph:"-46.63"}],
+   run:async a=>{ const r=await jget(`https://api.sunrise-sunset.org/json?lat=${a.lat||-23.55}&lng=${a.lon||-46.63}&formatted=0`);
+     return `Nascer: **${new Date(r.results.sunrise).toLocaleTimeString("pt-BR")}**\n`+
+       `Pôr: **${new Date(r.results.sunset).toLocaleTimeString("pt-BR")}**\n`+
+       `Duração do dia: ${(r.results.day_length/3600).toFixed(1)} h`; }},
+  {id:"geo", cat:"Clima", name:"Buscar coordenadas", desc:"Nominatim / OpenStreetMap", cors:true,
+   args:[{k:"q",label:"lugar",ph:"Praça da Sé"}],
+   run:async a=>{ const r=await jget("https://nominatim.openstreetmap.org/search?format=json&limit=3&q="+encodeURIComponent(a.q));
+     if(!r.length) throw new Error("nada encontrado");
+     return r.map(p=>`• **${p.display_name}**\n  ${p.lat}, ${p.lon}`).join("\n"); }},
+  {id:"country", cat:"Clima", name:"Dados de um país", desc:"REST Countries", cors:true,
+   args:[{k:"q",label:"país",ph:"brazil"}],
+   run:async a=>{ const r=await jget("https://restcountries.com/v3.1/name/"+encodeURIComponent(a.q||"brazil"));
+     const c=r[0]; const cur=Object.keys(c.currencies||{})[0];
+     return `**${c.translations?.por?.common||c.name.common}** (${c.cca2})\n`+
+       `Capital: ${c.capital?.[0]} · região ${c.region}\n`+
+       `População: ${c.population.toLocaleString("pt-BR")}\n`+
+       `Moeda: ${cur} · idiomas: ${Object.values(c.languages||{}).join(", ")}`; }},
 
-/* ------------------------------------------------------------- GERACAO */
-let ctl=null;
-async function enviar(){
-  const q=txt.value.trim(); if(!q) return;
-  if(!state.ep){ toast("Conecte um servidor na aba Modelo"); navTo("modelo"); return; }
-  if(!state.model){ toast("Escolha um modelo"); navTo("modelo"); return; }
-  txt.value=""; txt.style.height="auto";
-  msgs().push({role:"user",content:q}); save();
-  bub("me", esc(q));
-  await gerar();
-}
-async function gerar(){
-  const hist = msgs().map(m=>({role:m.role,content:m.content}));
-  if(state.system) hist.unshift({role:"system",content:state.system});
+  // -- finanças ------------------------------------------------------------
+  {id:"crypto", cat:"Finanças", name:"Preço de crypto", desc:"CoinGecko: preço, variação 24h", cors:true,
+   args:[{k:"q",label:"moeda",ph:"bitcoin"}],
+   run:async a=>{
+     const id=(a.q||"bitcoin").toLowerCase().trim();
+     const r=await jget(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd,brl&include_24hr_change=true&include_market_cap=true`);
+     const d=r[id]; if(!d) throw new Error("moeda não encontrada (use o id: bitcoin, ethereum, solana)");
+     const pc=d.usd_24h_change;
+     return `**${id}**\nUS$ ${d.usd.toLocaleString("en-US")} · R$ ${d.brl?.toLocaleString("pt-BR")}\n`+
+       `24h: ${pc>=0?"▲":"▼"} ${pc.toFixed(2)}%\nCap: US$ ${(d.usd_market_cap||0).toLocaleString("en-US")}`; }},
+  {id:"top10", cat:"Finanças", name:"Top 10 cryptos", desc:"CoinGecko markets", cors:true,
+   run:async()=>{ const r=await jget("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1");
+     return r.map((c,i)=>`${i+1}. **${c.symbol.toUpperCase()}** ${c.current_price.toLocaleString("en-US")} · ${c.price_change_percentage_24h.toFixed(2)}%`).join("\n"); }},
+  {id:"fx", cat:"Finanças", name:"Câmbio", desc:"Frankfurter (Banco Central Europeu)", cors:true,
+   args:[{k:"f",label:"de",ph:"USD"},{k:"t",label:"para",ph:"BRL"}],
+   run:async a=>{ const r=await jget(`https://api.frankfurter.app/latest?from=${a.f||"USD"}&to=${a.t||"BRL"}`);
+     const k=Object.keys(r.rates)[0];
+     return `**${r.base} → ${k}**\n1 ${r.base} = **${r.rates[k]}** ${k}\nData: ${r.date}`; }},
+  {id:"fxhist", cat:"Finanças", name:"Histórico de câmbio", desc:"Frankfurter: série temporal", cors:true,
+   args:[{k:"f",label:"de",ph:"USD"},{k:"t",label:"para",ph:"BRL"}],
+   run:async a=>{
+     const fim=new Date().toISOString().slice(0,10);
+     const ini=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
+     const r=await jget(`https://api.frankfurter.app/${ini}..${fim}?from=${a.f||"USD"}&to=${a.t||"BRL"}`);
+     const ks=Object.keys(r.rates).slice(-8);
+     return `Últimos dias (${a.f||"USD"}→${a.t||"BRL"}):\n`+ks.map(d=>`• ${d}: ${r.rates[d][a.t||"BRL"]}`).join("\n"); }},
+  {id:"kraken", cat:"Finanças", name:"Kraken ticker", desc:"Preço spot BTC/USD", cors:true,
+   run:async()=>{ const r=await jget("https://api.kraken.com/0/public/Ticker?pair=XBTUSD");
+     const k=Object.keys(r.result)[0], d=r.result[k];
+     return `**BTC/USD** (Kraken)\nÚltimo: ${d.c[0]}\nMáx 24h: ${d.h[0]} · mín ${d.l[0]}`; }},
+  {id:"cb", cat:"Finanças", name:"Coinbase spot", desc:"Preço à vista", cors:true,
+   args:[{k:"q",label:"par",ph:"BTC-USD"}],
+   run:async a=>{ const r=await jget("https://api.coinbase.com/v2/prices/"+(a.q||"BTC-USD")+"/spot");
+     return `**${r.data.base}/${r.data.currency}** = ${r.data.amount}`; }},
 
-  const el=bub("ai","");
-  ctl=new AbortController(); $("#bStop").hidden=false; $("#dot").className="dot wait";
-  let acc="", t0=performance.now(), toks=0;
-  const onTok=s=>{ acc+=s; toks++; el.innerHTML=md(acc); main.scrollTop=main.scrollHeight; };
+  // -- conhecimento --------------------------------------------------------
+  {id:"wiki", cat:"Conhecimento", name:"Resumo Wikipedia", desc:"Wikipédia em português", cors:true,
+   args:[{k:"q",label:"tema",ph:"fotossíntese"}],
+   run:async a=>{ const r=await jget("https://pt.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(a.q));
+     return `**${r.title}**\n${r.extract}\n\n[ler artigo](${r.content_urls.desktop.page})`; }},
+  {id:"wikis", cat:"Conhecimento", name:"Buscar Wikipedia", desc:"busca em pt", cors:true,
+   args:[{k:"q",label:"termo",ph:"clarice lispector"}],
+   run:async a=>{ const r=await jget("https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch="+encodeURIComponent(a.q)+"&format=json&srlimit=5&origin=*");
+     return r.query.search.map((s,i)=>`${i+1}. **${s.title}** — ${s.snippet.replace(/<[^>]+>/g,"")}`).join("\n\n"); }},
+  {id:"wikiEn", cat:"Conhecimento", name:"Wikipedia em inglês", desc:"quando pt é escasso", cors:true,
+   args:[{k:"q",label:"tema",ph:"quantum entanglement"}],
+   run:async a=>{ const r=await jget("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(a.q));
+     return `**${r.title}**\n${r.extract}`; }},
+  {id:"dict", cat:"Conhecimento", name:"Dicionário (inglês)", desc:"dictionaryapi.dev", cors:true,
+   args:[{k:"q",label:"palavra",ph:"serendipity"}],
+   run:async a=>{ const r=await jget("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(a.q));
+     const e=r[0];
+     return `**${e.word}** ${e.phonetic?"/"+e.phonetic+"/":""}\n`+
+       e.meanings.slice(0,3).map(m=>`*${m.partOfSpeech}*\n`+m.definitions.slice(0,2).map((d,i)=>`  ${i+1}. ${d.definition}`).join("\n")).join("\n"); }},
+  {id:"books", cat:"Conhecimento", name:"Buscar livros", desc:"Open Library", cors:true,
+   args:[{k:"q",label:"título/autor",ph:"machado de assis"}],
+   run:async a=>{ const r=await jget("https://openlibrary.org/search.json?q="+encodeURIComponent(a.q)+"&limit=5");
+     return r.docs.slice(0,5).map(d=>`• **${d.title}**${d.author_name?" — "+d.author_name[0]:""}${d.first_publish_year?" ("+d.first_publish_year+")":""}`).join("\n"); }},
+  {id:"gbooks", cat:"Conhecimento", name:"Google Books", desc:"catálogo aberto", cors:true,
+   args:[{k:"q",label:"busca",ph:"dom casmurro"}],
+   run:async a=>{ const r=await jget("https://www.googleapis.com/books/v1/volumes?q="+encodeURIComponent(a.q)+"&maxResults=5");
+     if(!r.items) throw new Error("nada encontrado");
+     return r.items.map(x=>{const v=x.volumeInfo;return `• **${v.title}**${v.authors?" — "+v.authors[0]:""}${v.publishedDate?" ("+v.publishedDate.slice(0,4)+")":""}`}).join("\n"); }},
+  {id:"ddg", cat:"Conhecimento", name:"Resposta instantânea", desc:"DuckDuckGo", cors:true,
+   args:[{k:"q",label:"consulta",ph:"python"}],
+   run:async a=>{ const r=await jget("https://api.duckduckgo.com/?q="+encodeURIComponent(a.q)+"&format=json&no_html=1");
+     return `**${r.Heading}**\n${r.AbstractText||r.Answer||"(sem resumo)"}`+(r.AbstractURL?`\n\n[fonte](${r.AbstractURL})`:""); }},
 
+  // -- notícias & código ---------------------------------------------------
+  {id:"hn", cat:"Notícias", name:"Hacker News", desc:"top 10 do momento", cors:true,
+   run:async()=>{ const ids=await jget("https://hacker-news.firebaseio.com/v0/topstories.json");
+     const it=await Promise.all(ids.slice(0,10).map(i=>jget("https://hacker-news.firebaseio.com/v0/item/"+i+".json",6000)));
+     return it.map((s,i)=>`${i+1}. **${s.title}**\n   ${s.score} pts · [link](${s.url||"https://news.ycombinator.com/item?id="+s.id})`).join("\n"); }},
+  {id:"hns", cat:"Notícias", name:"Buscar no Hacker News", desc:"Algolia", cors:true,
+   args:[{k:"q",label:"termo",ph:"rust"}],
+   run:async a=>{ const r=await jget("https://hn.algolia.com/api/v1/search?query="+encodeURIComponent(a.q)+"&hitsPerPage=6");
+     return r.hits.map(h=>`• **${h.title}**\n  ${h.points} pts · [link](${h.url||"https://news.ycombinator.com/item?id="+h.objectID})`).join("\n"); }},
+  {id:"gh", cat:"Notícias", name:"Buscar repositórios", desc:"GitHub search", cors:true,
+   args:[{k:"q",label:"termo",ph:"language:rust stars:>5000"}],
+   run:async a=>{ const r=await jget("https://api.github.com/search/repositories?q="+encodeURIComponent(a.q)+"&sort=stars&per_page=5");
+     return r.items.map(i=>`• **${i.full_name}** ⭐ ${i.stars??i.stargazers_count}\n  ${i.description||""}`).join("\n"); }},
+  {id:"devto", cat:"Notícias", name:"Artigos Dev.to", desc:"últimos posts", cors:true,
+   args:[{k:"q",label:"tag (opcional)",ph:"javascript"}],
+   run:async a=>{ const r=await jget("https://dev.to/api/articles"+(a.q?"?tag="+encodeURIComponent(a.q):"?top=7"));
+     return (r.items||r).slice(0,7).map(x=>`• **${x.title}** — ${x.user?.name||""}`).join("\n"); }},
+
+  // -- dados & ferramentas -------------------------------------------------
+  {id:"nasa", cat:"Dados", name:"Astronomia do dia", desc:"NASA APOD (chave demo)", cors:true,
+   run:async()=>{ const r=await jget("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY");
+     return `**${r.title}** (${r.date})\n${r.explanation.slice(0,600)}…`+(r.url?`\n\n[mídia](${r.url})`:""); }},
+  {id:"poke", cat:"Dados", name:"Pokémon", desc:"PokéAPI", cors:true,
+   args:[{k:"q",label:"nome ou nº",ph:"pikachu"}],
+   run:async a=>{ const r=await jget("https://pokeapi.co/api/v2/pokemon/"+encodeURIComponent((a.q||"pikachu").toLowerCase()));
+     return `**${r.name}** #${r.id}\nAltura ${r.height/10} m · peso ${r.weight/10} kg\n`+
+       `Tipos: ${r.types.map(t=>t.type.name).join(", ")}\nHabilidades: ${r.abilities.map(x=>x.ability.name).join(", ")}`; }},
+  {id:"meal", cat:"Dados", name:"Receita", desc:"TheMealDB", cors:true,
+   args:[{k:"q",label:"prato",ph:"chicken"}],
+   run:async a=>{ const r=await jget("https://www.themealdb.com/api/json/v1/1/search.php?s="+encodeURIComponent(a.q));
+     if(!r.meals) throw new Error("nada encontrado"); const m=r.meals[0];
+     const ing=[]; for(let i=1;i<=20;i++){ const s=m["strIngredient"+i]; if(s) ing.push(s+" — "+m["strMeasure"+i]); }
+     return `**${m.strMeal}** (${m.strArea})\n\nIngredientes:\n`+ing.map(x=>"• "+x).join("\n")+`\n\n${m.strInstructions.slice(0,500)}…`; }},
+  {id:"trivia", cat:"Dados", name:"Pergunta de quiz", desc:"Open Trivia DB", cors:true,
+   run:async()=>{ const r=await jget("https://opentdb.com/api.php?amount=1&type=multiple"); const q=r.results[0];
+     return `**${decodeURIComponent(q.question).replace(/&quot;/g,'"').replace(/&#039;/g,"'")}**\n`+
+       `Categoria: ${q.category} · ${q.difficulty}\n`+
+       [...q.incorrect_answers,q.correct_answer].map(a=>`• ${a}`).join("\n")+
+       `\n\n||Resposta: ${q.correct_answer}||`; }},
+  {id:"num", cat:"Dados", name:"Curiosidade de número", desc:"Numbers API", cors:true,
+   args:[{k:"q",label:"número",ph:"42"}],
+   run:async a=>{ return await tget("https://numbersapi.com/"+encodeURIComponent(a.q||"42")); }},
+  {id:"user", cat:"Dados", name:"Gerar pessoa fictícia", desc:"randomuser.me", cors:true,
+   run:async()=>{ const r=await jget("https://randomuser.me/api/"); const u=r.results[0];
+     return `**${u.name.first} ${u.name.last}**\n${u.email}\n${u.location.city}, ${u.location.country}\n${u.phone}`; }},
+  {id:"cards", cat:"Dados", name:"Comprar cartas", desc:"Deck of Cards", cors:true,
+   run:async()=>{ const r=await jget("https://deckofcardsapi.com/api/deck/new/draw/?count=3");
+     return `Suas cartas: ${r.cards.map(c=>c.value+" de "+c.suit).join(", ")}\nRestam ${r.remaining} no baralho`; }},
+  {id:"predict", cat:"Dados", name:"Idade / gênero / país", desc:"agify, genderize, nationalize", cors:true,
+   args:[{k:"q",label:"nome",ph:"joao"}],
+   run:async a=>{ const n=encodeURIComponent(a.q||"joao");
+     const [ag,gz,nz]=await Promise.all([
+       jget("https://api.agify.io?name="+n,7000),
+       jget("https://api.genderize.io?name="+n,7000),
+       jget("https://api.nationalize.io?name="+n,7000)]);
+     return `**${a.q||"joao"}**\nIdade provável: ${ag.age}\nGênero provável: ${gz.gender||"?"} (${(gz.probability*100).toFixed(0)}%)\n`+
+       `Países: ${(nz.country||[]).slice(0,3).map(c=>c.country_id+" "+(c.probability*100).toFixed(0)+"%").join(", ")}`; }},
+
+  // -- cultura & imagens (acervos abertos) ---------------------------------
+  {id:"met", cat:"Cultura", name:"Acervo do Met", desc:"Metropolitan Museum: busca de obras", cors:true,
+   args:[{k:"q",label:"termo",ph:"sunflowers"}],
+   run:async a=>{
+     const s=await jget("https://collectionapi.metmuseum.org/public/collection/v1/search?q="+encodeURIComponent(a.q||"sunflowers"));
+     if(!s.objectIDs) throw new Error("nada encontrado");
+     const it=await Promise.all(s.objectIDs.slice(0,3).map(i=>jget("https://collectionapi.metmuseum.org/public/collection/v1/objects/"+i,7000)));
+     return it.filter(o=>o).map(o=>`• **${o.title}** — ${o.artistDisplayName||"autor desconhecido"} (${o.objectDate})\n  ${o.classification}${o.primaryImage?`\n  [imagem](${o.primaryImage})`:""}`).join("\n"); }},
+  {id:"artic", cat:"Cultura", name:"Acervo de Chicago", desc:"Art Institute of Chicago", cors:true,
+   args:[{k:"q",label:"termo",ph:"monet"}],
+   run:async a=>{ const r=await jget("https://api.artic.edu/api/v1/artworks/search?q="+encodeURIComponent(a.q||"monet")+"&limit=5&fields=id,title,artist_title,date_display,image_id");
+     const II="https://www.artic.edu/iiif/2";
+     return r.data.map(d=>`• **${d.title}** — ${d.artist_title||"?"} (${d.date_display||"?"})`).join("\n"); }},
+  {id:"swapi", cat:"Cultura", name:"Star Wars", desc:"SWAPI: personagens, naves, planetas", cors:true,
+   args:[{k:"q",label:"nome",ph:"luke"}],
+   run:async a=>{ const r=await jget("https://swapi.dev/api/people/?search="+encodeURIComponent(a.q||"luke"));
+     if(!r.results?.length) throw new Error("não encontrado"); const p=r.results[0];
+     return `**${p.name}**\nAltura ${p.height} cm · peso ${p.mass} kg\nNascimento: ${p.birth_year}\nGênero: ${p.gender}`; }},
+  {id:"ghibli", cat:"Cultura", name:"Studio Ghibli", desc:"filmes e personagens", cors:true,
+   args:[{k:"q",label:"filme (opcional)",ph:"totoro"}],
+   run:async a=>{ const r=await jget("https://ghibliapi.vercel.app/films");
+     const f=(a.q? r.filter(x=>x.title.toLowerCase().includes(a.q.toLowerCase())) : r).slice(0,3);
+     if(!f.length) throw new Error("não encontrado");
+     return f.map(x=>`• **${x.title}** (${x.release_date}) — ${x.director}\n  ${x.rt_score}% no RT`).join("\n"); }},
+  {id:"cocktail", cat:"Cultura", name:"Drink / coquetel", desc:"TheCocktailDB", cors:true,
+   args:[{k:"q",label:"nome",ph:"margarita"}],
+   run:async a=>{ const r=await jget("https://www.thecocktaildb.com/api/json/v1/1/search.php?s="+encodeURIComponent(a.q||"margarita"));
+     if(!r.drinks) throw new Error("não encontrado"); const d=r.drinks[0];
+     const ing=[]; for(let i=1;i<=15;i++){ if(d["strIngredient"+i]) ing.push(d["strIngredient"+i]+" "+d["strMeasure"+i]); }
+     return `**${d.strDrink}** (${d.strCategory})\n`+ing.map(x=>"• "+x).join("\n")+"\n\n"+d.strInstructions.slice(0,400); }},
+
+  // -- mais dados ----------------------------------------------------------
+  {id:"trending", cat:"Dados", name:"Cryptos em alta", desc:"CoinGecko trending", cors:true,
+   run:async()=>{ const r=await jget("https://api.coingecko.com/api/v3/search/trending");
+     return r.coins.slice(0,8).map(c=>{const d=c.item;return `• **${d.symbol}** ${d.data?.price||""} · ${(d.data?.price_change_percentage_24h?.brl||0).toFixed?.(2)||"?"}%`}).join("\n"); }},
+  {id:"elev", cat:"Dados", name:"Altitude", desc:"Open-Meteo elevation", cors:true,
+   args:[{k:"lat",label:"latitude",ph:"-22.95"},{k:"lon",label:"longitude",ph:"-43.19"}],
+   run:async a=>{ const r=await jget(`https://api.open-meteo.com/v1/elevation?latitude=${a.lat||-22.95}&longitude=${a.lon||-43.19}`);
+     return `Altitude: **${r.elevation[0]} m**`; }},
+  {id:"mars", cat:"Dados", name:"Fotos de Marte", desc:"NASA Mars Rover (chave demo)", cors:true,
+   run:async()=>{ const r=await jget("https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=DEMO_KEY");
+     const p=r.photos?.slice(0,3)||[]; if(!p.length) throw new Error("sem fotos neste sol");
+     return `**Curiosity, sol 1000** (${r.photos.length} fotos)\n`+p.map(x=>`• ${x.camera.full_name}\n  [ver](${x.img_src})`).join("\n"); }},
+  {id:"randomwiki", cat:"Dados", name:"Artigo aleatório", desc:"Wikipédia: página ao acaso", cors:true,
+   run:async()=>{ const r=await jget("https://pt.wikipedia.org/api/rest_v1/page/random/summary");
+     return `**${r.title}**\n${r.extract}\n\n[abrir](${r.content_urls.desktop.page})`; }},
+  {id:"hoje", cat:"Dados", name:"Aconteceu neste dia", desc:"Wikipédia: efemérides", cors:true,
+   run:async()=>{ const d=new Date(); const mm=String(d.getMonth()+1).padStart(2,"0"), dd=String(d.getDate()).padStart(2,"0");
+     const r=await jget(`https://pt.wikipedia.org/api/rest_v1/feed/onthisday/births/${mm}/${dd}`);
+     return `**${dd}/${mm} — nasceram:**\n`+r.births.slice(0,5).map(b=>`• ${b.text}`).join("\n"); }},
+  {id:"yesno", cat:"Dados", name:"Sim ou não", desc:"yesno.wtf", cors:true,
+   run:async()=>{ const r=await jget("https://yesno.wtf/api"); return `**${r.answer.toUpperCase()}**`; }},
+  {id:"fact", cat:"Dados", name:"Fato inútil", desc:"uselessfacts", cors:true,
+   run:async()=>{ const r=await jget("https://uselessfacts.jsph.pl/random.json?language=en"); return r.text; }},
+  {id:"placeholder", cat:"Dados", name:"JSON de teste", desc:"jsonplaceholder — prova de rede", cors:true,
+   run:async()=>{ const r=await jget("https://jsonplaceholder.typicode.com/todos/1");
+     return `Conectividade OK.\nAmostra: **${r.title}** (id ${r.id}, completo: ${r.completed})`; }},
+  // -- diversão ------------------------------------------------------------
+  {id:"joke", cat:"Diversão", name:"Piada", desc:"JokeAPI", cors:true,
+   run:async()=>{ const r=await jget("https://v2.jokeapi.dev/joke/Any?type=twopart");
+     return `**${r.setup}**\n\n${r.delivery}`; }},
+  {id:"advice", cat:"Diversão", name:"Conselho", desc:"Advice Slip", cors:true,
+   run:async()=>{ const r=await jget("https://api.adviceslip.com/advice"); return "“"+r.slip.advice+"”"; }},
+  {id:"cat", cat:"Diversão", name:"Fato sobre gatos", desc:"catfact.ninja", cors:true,
+   run:async()=>{ const r=await jget("https://catfact.ninja/fact"); return r.fact; }},
+  {id:"dog", cat:"Diversão", name:"Foto de cachorro", desc:"Dog CEO", cors:true,
+   run:async()=>{ const r=await jget("https://dog.ceo/api/breeds/image/random"); return `[imagem](${r.message})`; }},
+  {id:"norris", cat:"Diversão", name:"Chuck Norris", desc:"chucknorris.io", cors:true,
+   run:async()=>{ const r=await jget("https://api.chucknorris.io/jokes/random"); return r.value; }},
+];
+const API_BY_ID = Object.fromEntries(API.map(a=>[a.id,a]));
+const CATS = [...new Set(API.map(a=>a.cat))];
+
+/* ============================================================== PROVEDORES LLM */
+const PROVIDERS = [
+  {id:"pollinations", name:"Pollinations (sem chave)", needsKey:false,
+   url:"https://text.pollinations.ai/openai", model:"openai",
+   call:async(messages)=>{
+     const r=await fetch("https://text.pollinations.ai/openai",{
+       method:"POST",headers:{"Content-Type":"application/json"},
+       body:JSON.stringify({model:"openai",messages,stream:false})});
+     if(!r.ok) throw new Error("HTTP "+r.status);
+     const d=await r.json(); return d.choices?.[0]?.message?.content || "(sem resposta)";
+   }},
+  {id:"groq", name:"Groq (chave grátis)", needsKey:true, url:"https://api.groq.com/openai/v1/chat/completions", model:"llama-3.3-70b-versatile",
+   call:async(messages,key,model)=>openAICompat("https://api.groq.com/openai/v1/chat/completions",key,model||"llama-3.3-70b-versatile",messages)},
+  {id:"openrouter", name:"OpenRouter (chave grátis)", needsKey:true, url:"https://openrouter.ai/api/v1/chat/completions", model:"meta-llama/llama-3.3-70b-instruct:free",
+   call:async(messages,key,model)=>openAICompat("https://openrouter.ai/api/v1/chat/completions",key,model||"meta-llama/llama-3.3-70b-instruct:free",messages)},
+  {id:"gemini", name:"Google Gemini (chave grátis)", needsKey:true,
+   call:async(messages,key)=>{
+     const k=key; if(!k) throw new Error("sem chave");
+     const body={contents:messages.map(m=>({role:m.role==="assistant"?"model":"user",parts:[{text:m.content}]}))};
+     const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+k,{
+       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+     if(!r.ok) throw new Error("HTTP "+r.status);
+     const d=await r.json(); return d.candidates?.[0]?.content?.parts?.[0]?.text || "(sem resposta)";
+   }},
+  {id:"mistral", name:"Mistral (chave)", needsKey:true,
+   call:async(messages,key)=>openAICompat("https://api.mistral.ai/v1/chat/completions",key,"mistral-small-latest",messages)},
+];
+async function openAICompat(url,key,model,messages){
+  const c=new AbortController(); const t=setTimeout(()=>c.abort(),60000);
   try{
-    if(state.kind==="ollama"){
-      const body={model:state.model, messages:hist, stream:true,
-        options:{temperature:state.p.temperature, top_p:state.p.top_p, top_k:state.p.top_k,
-                 repeat_penalty:state.p.repeat_penalty, num_ctx:state.p.num_ctx}};
-      await streamOllama(state.ep+"/api/chat", body, onTok, ctl.signal);
-    } else {
-      const body={model:state.model, messages:hist, stream:true,
-        temperature:state.p.temperature, top_p:state.p.top_p};
-      if(state.p.max_tokens>0) body.max_tokens=state.p.max_tokens;
-      await streamOpenAI(state.ep+"/v1/chat/completions", body, onTok, ctl.signal);
-    }
-    const dt=(performance.now()-t0)/1000;
-    el.innerHTML=md(acc)+`<div class="meta">${toks} tok · ${dt.toFixed(1)}s · ${(toks/dt).toFixed(1)} tok/s</div>`;
-    msgs().push({role:"assistant",content:acc}); save();
-    $("#dot").className="dot on";
-  }catch(e){
-    if(e.name==="AbortError"){ el.innerHTML=md(acc)+'<div class="meta">interrompido</div>'; }
-    else{ el.innerHTML='<span style="color:var(--err)">Falhou: '+esc(e.message)+'</span>'; $("#dot").className="dot"; }
-  }finally{ ctl=null; $("#bStop").hidden=true; }
+    const r=await fetch(url,{method:"POST",signal:c.signal,
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
+      body:JSON.stringify({model,messages,stream:false})});
+    if(!r.ok){ const e=await r.text().catch(()=>""); throw new Error("HTTP "+r.status+" "+e.slice(0,120)); }
+    const d=await r.json(); return d.choices?.[0]?.message?.content || "(sem resposta)";
+  } finally { clearTimeout(t); }
 }
-$("#bStop").onclick=()=>{ if(ctl){ ctl.abort(); ctl=null; } };
 
-/* ------------------------------------------------------------- PAINEIS */
-function navTo(t){
-  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
-  if(t==="chat"){ main.innerHTML='<div id="chat"></div>';
-    msgs().forEach(m=>bub(m.role==="user"?"me":"ai", md(m.content)));
-    if(!msgs().length) boasVindas(); return; }
-  main.innerHTML = '<div id="pane"></div>';
-  if(t==="modelo") renderModelo();
-  if(t==="ajustes") renderAjustes();
-  if(t==="diag") renderDiag();
+/* ==================================================== ROTEAMENTO DE INTENCAO */
+const REGRAS = [
+  [/(?:\bclima\b|previs[aã]o|temperatura|vai chover|\bo tempo\b|\bprevis[aã]o do tempo\b)/i, "meteo"],
+  [/(qualidade do ar|polui[cç][aã]o|aqi)/i, "airq"],
+  [/(onde (eu )?estou|meu ip|geolocaliza)/i, "ipgeo"],
+  [/(que horas|hora exata|fuso)/i, "tz"],
+  [/(nascer do sol|p[oô]r do sol)/i, "sun"],
+  [/(coordenadas|latitude)/i, "geo"],
+  [/(bitcoin|btc|ethereum|eth|solana|crypto|criptomoeda)\b/i, "crypto"],
+  [/(top \d+ crypto|maiores cryptos|market cap)/i, "top10"],
+  [/(d[oó]lar|c[aâ]mbio|euro|cotacao|cota[cç][aã]o)/i, "fx"],
+  [/(hist[oó]rico do d[oó]lar|c[aâ]mbio hist)/i, "fxhist"],
+  [/(wikip[eé]dia|wiki|quem foi|o que [eé])/i, "wiki"],
+  [/(definir|defini[cç][aã]o|significado da palavra)/i, "dict"],
+  [/(livro|autor|biblioteca)/i, "books"],
+  [/(hacker ?news|not[ií]cias de tech)/i, "hn"],
+  [/(reposit[oó]rio|github)/i, "gh"],
+  [/(nasa|astronomia|espa[cç]o)/i, "nasa"],
+  [/(pok[eé]mon|pokemon)/i, "poke"],
+  [/(receita|comida|prato)/i, "meal"],
+  [/(quiz|pergunta|trivia)/i, "trivia"],
+  [/(piada|brincadeira|me fa[cç]a rir)/i, "joke"],
+  [/(conselho|advice)/i, "advice"],
+  [/(gato|gatos|cat)/i, "cat"],
+  [/(cachorro|dog)/i, "dog"],
+  [/(chuck)/i, "norris"],
+  [/(pa[ií]s|country)/i, "country"],
+  [/(museu|met|obra de arte|pintura|acervo)/i, "met"],
+  [/(star ?wars|swapi)/i, "swapi"],
+  [/(ghibli|totoro|mononoke)/i, "ghibli"],
+  [/(drink|coquetel|cocktail|bebida)/i, "cocktail"],
+  [/(alta|em alta|trending)/i, "trending"],
+  [/(altitude|eleva[cç][aã]o)/i, "elev"],
+  [/(marte|mars|rover)/i, "mars"],
+  [/(aleat[oó]rio|me surpreenda|qualquer coisa)/i, "randomwiki"],
+  [/(neste dia|aconteceu em|efem[eé]rides)/i, "hoje"],
+  [/(sim ou n[aã]o|devo\?)/i, "yesno"],
+  [/(fato in[uú]til|curiosidade)/i, "fact"],
+];
+function detectar(t){
+  const s=t.toLowerCase();
+  for(const [re,id] of REGRAS) if(re.test(s)) return id;
+  return null;
+}
+function extrairArgs(id, texto){
+  const spec = API_BY_ID[id]; if(!spec?.args) return {};
+  const out={};
+  // pega o trecho depois da palavra-chave quando houver "sobre X" / "de X"
+  const m = texto.match(/(?:sobre|de|em|para|do|da)\s+(.+)$/i);
+  const resto = (m? m[1] : texto).trim();
+  spec.args.forEach((a,i)=>{
+    if(i===0) out[a.k] = resto.slice(0,80);
+    else out[a.k] = a.ph;
+  });
+  return out;
+}
+
+/* ==================================================================== CHAT */
+const SYS = "Você é SkynetChat, um assistente direto e preciso em português. "+
+  "Seja conciso. Quando receber dados de ferramentas, use-os e cite a fonte. "+
+  "Se não souber, diga que não sabe.";
+
+function historico(){
+  return [{role:"system",content:SYS}, ...state.msgs.slice(-12).map(m=>({role:m.role,content:m.content}))];
+}
+async function chamarLLM(msgs){
+  const ordem = state.provider==="auto"
+    ? [...PROVIDERS.filter(p=>!p.needsKey), ...PROVIDERS.filter(p=>p.needsKey && state.keys[p.id])]
+    : PROVIDERS.filter(p=>p.id===state.provider);
+  const erros=[];
+  for(const p of ordem){
+    if(p.needsKey && !state.keys[p.id]) continue;
+    try{ const r=await p.call(msgs, state.keys[p.id], state.model); return {txt:r, prov:p.name}; }
+    catch(e){ erros.push(p.name+": "+e.message); }
+  }
+  throw new Error(erros.join(" | ")||"nenhum provedor disponível");
+}
+
+async function enviar(){
+  const q = txt.value.trim(); if(!q) return;
+  txt.value=""; txt.style.height="auto";
+  state.msgs.push({role:"user",content:q}); save();
+  bubble("me", esc(q));
+  await responder(q);
+}
+
+async function responder(q){
+  const id = detectar(q);
+  let contexto = "";
+
+  // 1) ferramenta primeiro (dado real > palpite)
+  if(id){
+    const spec=API_BY_ID[id];
+    const t=thinking("consultando "+spec.name);
+    try{
+      const r=await spec.run(extrairArgs(id,q));
+      t.done("<b>"+esc(spec.name)+"</b>\n"+md(r));
+      contexto = `[DADOS REAIS de ${spec.name}]\n${r}`;
+      state.msgs.push({role:"system",content:contexto});
+    }catch(e){
+      t.done("Ferramenta falhou ("+esc(e.message)+"). Tentando o modelo…");
+    }
+  }
+
+  // 2) modelo de linguagem
+  const t=thinking("pensando");
+  try{
+    const {txt:r, prov} = await chamarLLM(historico());
+    t.done(md(r)+`<div style="margin-top:6px"><span class="pill">${esc(prov)}</span></div>`);
+    state.msgs.push({role:"assistant",content:r}); save();
+  }catch(e){
+    t.done(fallback(q, contexto, e.message));
+  }
+}
+
+function fallback(q, contexto, erro){
+  let out = "⚠️ Sem modelo de linguagem disponível.\n\n";
+  if(contexto) out += "Os dados reais acima vieram de uma API pública e continuam válidos.\n\n";
+  out += "Para ter conversa real, adicione uma chave gratuita em **Ajustes** "+
+         "(Groq e OpenRouter têm tier grátis; Pollinations não precisa de chave).\n\n"+
+         "Enquanto isso, uso as ferramentas e funções locais.\n\n"+
+         "<span class='pill'>erro</span> "+esc(erro).slice(0,160);
+  const local = localTool(q);
+  if(local) out += "\n\n"+md(local);
+  return md(out);
+}
+
+/* --------------------------------------------------------- ferramentas locais */
+function localTool(q){
+  const s=q.trim();
+  // matematica segura
+  if(/^[\d\s+\-*/().,%^]+$/.test(s) && /\d/.test(s)){
+    try{
+      const v = Function('"use strict";return ('+s.replace(/\^/g,"**").replace(/%/g,"/100")+')')();
+      if(typeof v==="number" && isFinite(v)) return "**Calc:** `"+esc(s)+"` = **"+v+"**";
+    }catch(e){}
+  }
+  const cu = s.match(/^([\d.,]+)\s*(km|mi|m|ft|kg|lb|c|f|l|gal)\s*(?:para|em|to)\s*(km|mi|m|ft|kg|lb|c|f|l|gal)$/i);
+  if(cu){
+    const v=parseFloat(cu[1].replace(",",".")), a=cu[2].toLowerCase(), b=cu[3].toLowerCase();
+    const T={km:1000,mi:1609.344,m:1,ft:0.3048,kg:1,lb:0.453592,l:1,gal:3.78541};
+    const temp=a==="c"||a==="f";
+    let r;
+    if(temp){ r = a==="c" ? v*9/5+32 : (v-32)*5/9; }
+    else r = v*(T[a]/T[b]);
+    return `**Conversão:** ${v} ${a} = **${r.toFixed(4).replace(/\.?0+$/,"")}** ${b}`;
+  }
+  if(/^(base64|b64)\s+/i.test(s)){
+    const p=s.replace(/^(base64|b64)\s+/i,"");
+    try{ return "**Base64:** `"+btoa(unescape(encodeURIComponent(p)))+"`"; }catch(e){}
+  }
+  if(/^(ajuda|help|comandos)/i.test(s)){
+    return "Posso usar estas ferramentas (dados reais, sem chave):\n"+
+      API.map(a=>"• "+a.name+" — "+a.desc).join("\n")+
+      "\n\nFunções locais: `2+2*10`, `100 km para mi`, `32 c para f`, `base64 texto`";
+  }
+  return null;
+}
+
+/* ============================================================== AUTOTESTE */
+async function testar(id){
+  const spec=API_BY_ID[id]; const el=document.querySelector('[data-tile="'+id+'"] .st');
+  if(el){ el.textContent="…"; el.className="st"; }
+  const t0=performance.now();
+  try{
+    const args={}; (spec.args||[]).forEach(a=>args[a.k]=a.ph);
+    const r=await spec.run(args);
+    const ok = !!r && String(r).length>3;
+    state.tests[id]={ok,ms:Math.round(performance.now()-t0),at:Date.now()};
+    if(el){ el.textContent=ok?"ok":"?"; el.className="st "+(ok?"ok":"no"); }
+  }catch(e){
+    state.tests[id]={ok:false,err:e.message,at:Date.now()};
+    if(el){ el.textContent="falhou"; el.className="st no"; }
+  }
+  save();
+}
+async function testarTudo(){
+  const ids=API.map(a=>a.id);
+  for(let i=0;i<ids.length;i+=6){
+    await Promise.all(ids.slice(i,i+6).map(testar));
+  }
+  toast("Autoteste concluído");
+  renderStatus();
+}
+async function testarLLM(){
+  const out=$("#llmtest");
+  out.textContent="testando…";
+  const linhas=[];
+  for(const p of PROVIDERS){
+    if(p.needsKey && !state.keys[p.id]){ linhas.push(`• ${p.name}: sem chave`); continue; }
+    const t0=performance.now();
+    try{
+      const r=await p.call([{role:"user",content:"diga apenas: ok"}], state.keys[p.id], state.model);
+      linhas.push(`• ${p.name}: **OK** ${Math.round(performance.now()-t0)}ms — ${String(r).slice(0,60)}`);
+    }catch(e){ linhas.push(`• ${p.name}: falhou — ${e.message.slice(0,80)}`); }
+  }
+  out.innerHTML=md(linhas.join("\n"));
+}
+
+/* ============================================================== PAINEIS */
+function renderTools(){
+  const el=$("#tools"); el.innerHTML="";
+  CATS.forEach(c=>{
+    const sec=document.createElement("div"); sec.className="sec";
+    sec.innerHTML='<h3>'+esc(c)+'</h3>';
+    const grid=document.createElement("div"); grid.className="grid";
+    API.filter(a=>a.cat===c).forEach(a=>{
+      const t=document.createElement("div"); t.className="tile"; t.dataset.tile=a.id;
+      const st=state.tests[a.id];
+      t.innerHTML=`<span class="st ${st?(st.ok?"ok":"no"):""}">${st?(st.ok?"ok":"falhou"):"testar"}</span>
+        <h4>${esc(a.name)}</h4><p>${esc(a.desc)}</p>`;
+      t.onclick=()=>usarFerramenta(a);
+      grid.appendChild(t);
+    });
+    sec.appendChild(grid); el.appendChild(sec);
+  });
+}
+async function usarFerramenta(a){
+  navTo("chat");
+  let args={};
+  if(a.args){
+    for(const spec of a.args){
+      const v=prompt(spec.label||spec.k, spec.ph||"");
+      if(v===null) return;
+      args[spec.k]=v||spec.ph;
+    }
+  }
+  bubble("me", "🔧 "+esc(a.name)+(Object.keys(args).length?" — "+esc(JSON.stringify(args)):""));
+  const {t,v}=await tries(()=>a.run(args), "consultando "+a.name);
+  if(v!==null) t.done("<b>"+esc(a.name)+"</b>\n"+md(v));
+}
+function renderStatus(){
+  const el=$("#status"); if(!el) return;
+  const total=API.length;
+  const ok=Object.values(state.tests).filter(t=>t.ok).length;
+  const off=!navigator.onLine;
+  el.innerHTML=
+   `<div class="card">
+      <div class="kv"><span>Rede</span><b>${off?"offline":"online"}</b></div>
+      <div class="kv"><span>APIs no catálogo</span><b>${total}</b></div>
+      <div class="kv"><span>Testadas e OK</span><b>${ok}</b></div>
+      <div class="kv"><span>Falharam / não testadas</span><b>${total-ok}</b></div>
+      <div class="row" style="margin-top:10px">
+        <button class="b" id="btnTestAll">Testar todas</button>
+        <button class="g" id="btnTestLLM">Testar modelos</button>
+      </div>
+      <p class="muted" style="margin-top:10px">O teste roda no seu navegador: falha aqui quase sempre
+      significa bloqueio de CORS, e não que a API esteja fora do ar.</p>
+    </div>
+    <div class="card"><h3 style="margin:0 0 8px">Modelos</h3><div id="llmtest" class="muted">—</div></div>
+    <div class="card">${Object.keys(state.tests).length?
+      API.filter(a=>state.tests[a.id]).map(a=>{
+        const t=state.tests[a.id];
+        return `<div class="kv"><span>${esc(a.name)}</span><b style="color:${t.ok?"var(--acc)":"var(--err)"}">${t.ok?t.ms+"ms":"falhou"}</b></div>`;
+      }).join(""):'<p class="muted">Nada testado ainda.</p>'}</div>`;
+  $("#btnTestAll").onclick=testarTudo;
+  $("#btnTestLLM").onclick=testarLLM;
+}
+function renderCfg(){
+  const el=$("#cfg");
+  el.innerHTML=
+   `<div class="card">
+      <h3 style="margin:0 0 6px">Provedor de linguagem</h3>
+      <label>Estratégia</label>
+      <select id="prov">
+        <option value="auto">Automático (sem chave primeiro)</option>
+        ${PROVIDERS.filter(p=>p.needsKey).map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")}
+      </select>
+      <label>Modelo (opcional; vazio = padrão do provedor)</label>
+      <input id="model" placeholder="ex: llama-3.3-70b-versatile">
+      <p class="muted" style="margin-top:8px">Chaves ficam só neste dispositivo (localStorage).
+      Groq e OpenRouter têm tier gratuito; Pollinations funciona sem chave.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 6px">Chaves</h3>
+      ${PROVIDERS.filter(p=>p.needsKey).map(p=>`
+        <label>${esc(p.name)}</label>
+        <input data-key="${p.id}" type="password" placeholder="cole aqui" value="${esc(state.keys[p.id]||"")}">`).join("")}
+      <div class="row" style="margin-top:10px">
+        <button class="b" id="btnSaveKeys">Salvar</button>
+        <button class="g" id="btnClearKeys">Limpar</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 6px">Voz</h3>
+      <label><input type="checkbox" id="voiceChk" ${state.voice?"checked":""}> Ler respostas em voz alta</label>
+      <p class="muted" style="margin-top:8px">Usa a síntese de voz do sistema — funciona offline.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 6px">Dados locais</h3>
+      <div class="kv"><span>Mensagens na conversa</span><b>${state.msgs.length}</b></div>
+      <div class="row" style="margin-top:10px">
+        <button class="g" id="btnExport">Exportar .json</button>
+        <button class="g" id="btnImport">Importar</button>
+      </div>
+      <input type="file" id="fileIn" accept="application/json" class="hidden">
+      <button class="g" id="btnWipe" style="margin-top:8px">Apagar histórico</button>
+    </div>`;
+  $("#prov").value=state.provider;
+  $("#model").value=state.model||"";
+  $("#prov").onchange=e=>{ state.provider=e.target.value; save(); };
+  $("#model").onchange=e=>{ state.model=e.target.value; save(); };
+  $("#btnSaveKeys").onclick=()=>{
+    document.querySelectorAll("[data-key]").forEach(i=>state.keys[i.dataset.key]=i.value.trim());
+    save(); toast("Chaves salvas");
+  };
+  $("#btnClearKeys").onclick=()=>{ state.keys={}; save(); renderCfg(); toast("Chaves removidas"); };
+  $("#voiceChk").onchange=e=>{ state.voice=e.target.checked; save(); };
+  $("#btnWipe").onclick=()=>{ state.msgs=[]; save(); const c=chat(); if(c) c.innerHTML=""; boasVindas(); toast("Histórico apagado"); };
+  $("#btnExport").onclick=()=>{
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="skynetchat-"+new Date().toISOString().slice(0,10)+".json";
+    a.click(); URL.revokeObjectURL(a.href); toast("Exportado");
+  };
+  $("#btnImport").onclick=()=>$("#fileIn").click();
+  $("#fileIn").onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=()=>{ try{
+      const d=JSON.parse(r.result);
+      if(Array.isArray(d.msgs)) state.msgs=d.msgs;
+      if(d.keys) state.keys=d.keys;
+      save(); navTo("chat"); toast("Importado");
+    }catch(err){ toast("arquivo inválido"); } };
+    r.readAsText(f);
+  };
+}
+
+function navTo(tab){
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  main.className = tab==="chat" ? "chatpad" : "";
+  $("#composer").classList.toggle("hidden", tab!=="chat");
+  let html="";
+  if(tab==="chat"){ main.innerHTML='<div id="chat"></div>'; state.msgs.forEach(m=>{
+      const c=m.role==="user"?"me":(m.role==="assistant"?"":"");
+      bubble(c, md(m.content));
+    }); if(!state.msgs.length) boasVindas(); return; }
+  if(tab==="tools"){ html='<div id="tools"></div>'; }
+  if(tab==="status"){ html='<div id="status"></div>'; }
+  if(tab==="cfg"){ html='<div id="cfg"></div>'; }
+  main.innerHTML=html;
+  if(tab==="tools") renderTools();
+  if(tab==="status") renderStatus();
+  if(tab==="cfg") renderCfg();
 }
 function boasVindas(){
-  bub("ai", "**SkynetChat** — cliente de IA local.\n\n"+
-    "Rode um modelo no seu equipamento (Ollama, LM Studio, llama.cpp…) e conecte na aba **Modelo**.\n\n"+
-    "Como o modelo roda na sua máquina, **não existe empresa alguma entre você e a resposta**. "+
-    "O system prompt é seu, o histórico fica no seu navegador, nada sai daqui.\n\n"+
-    "Se não tiver modelo instalado, a aba **Diagnóstico** mostra o que é preciso.");
-}
-function renderModelo(){
-  const p=$("#pane");
-  p.innerHTML=
-   `<div class="card">
-      <h3>Servidor de inferência</h3>
-      <div id="eps"></div>
-      <label>Endpoint personalizado (OpenAI-compatível)</label>
-      <input id="custom" placeholder="http://192.168.0.10:1234">
-      <div class="row" style="margin-top:8px">
-        <button class="b" id="useCustom">Usar este</button>
-        <button class="g" id="probe">Testar</button>
-      </div>
-      <p class="muted" style="margin-top:10px">
-        Rodando como arquivo local, o navegador pode bloquear por CORS.
-        No Ollama, inicie com <code>OLLAMA_ORIGINS=*</code>.
-      </p>
-    </div>
-    <div class="card">
-      <h3>Modelo</h3>
-      <select id="sel"><option value="">— escolha —</option></select>
-      <div class="row" style="margin-top:8px">
-        <button class="g" id="refresh">Recarregar lista</button>
-      </div>
-    </div>
-    <div class="card">
-      <h3>Conversas</h3>
-      <div id="convs"></div>
-      <div class="row" style="margin-top:8px">
-        <button class="g" id="exp">Exportar .json</button>
-        <button class="g" id="wipe">Apagar tudo</button>
-      </div>
-    </div>`;
-  const box=$("#eps");
-  PRESETS.forEach(pr=>{
-    const d=document.createElement("div"); d.className="ep"+(state.ep===pr.base?" on":"");
-    d.innerHTML=`<div class="nm">${esc(pr.nm)}</div><div class="st">testar</div>`;
-    d.onclick=async()=>{
-      const st=d.querySelector(".st"); st.textContent="…";
-      const r=await ping(pr.base, pr.models);
-      if(r.ok){
-        state.ep=pr.base; state.kind=pr.kind; save();
-        st.textContent="ok"; st.className="st ok";
-        toast(pr.nm+" conectado"); await popularModelos(); renderModelo();
-      } else {
-        st.textContent=r.code||"x"; st.className="st no";
-        toast(pr.nm+": "+(r.err||("HTTP "+r.code)));
-      }
-    };
-    box.appendChild(d);
-  });
-  $("#useCustom").onclick=async()=>{
-    const v=$("#custom").value.trim().replace(/\/$/,"");
-    if(!v) return toast("cole uma URL");
-    const r=await ping(v,"/v1/models");
-    if(!r.ok) return toast("sem resposta: "+(r.err||("HTTP "+r.code)));
-    state.ep=v; state.kind="openai"; save(); toast("conectado"); await popularModelos(); renderModelo();
-  };
-  $("#probe").onclick=async()=>{
-    const v=$("#custom").value.trim().replace(/\/$/,"")||state.ep;
-    if(!v) return toast("cole uma URL");
-    const r=await ping(v,"/v1/models"); const r2=await ping(v,"/api/tags");
-    toast(`/v1/models: ${r.code||r.err} · /api/tags: ${r2.code||r2.err}`);
-  };
-  $("#refresh").onclick=async()=>{ await popularModelos(); renderModelo(); };
-  $("#sel").onchange=e=>{ state.model=e.target.value; save(); toast("modelo: "+state.model); };
-  const cv=$("#convs");
-  state.convs.forEach((c,i)=>{
-    const d=document.createElement("div"); d.className="ep"+(i===state.conv?" on":"");
-    d.innerHTML=`<div class="nm">Conversa ${i+1} <span class="pill">${c.length} msgs</span></div>`;
-    d.onclick=()=>{ state.conv=i; save(); navTo("chat"); };
-    cv.appendChild(d);
-  });
-  $("#exp").onclick=()=>{
-    const b=new Blob([JSON.stringify(state.convs,null,2)],{type:"application/json"});
-    const a=document.createElement("a"); a.href=URL.createObjectURL(b);
-    a.download="skynet-conversas.json"; a.click(); URL.revokeObjectURL(a.href);
-  };
-  $("#wipe").onclick=()=>{ if(confirm("Apagar conversas e config?")){ localStorage.removeItem(LS); location.reload(); } };
-  popularModelos();
-}
-async function popularModelos(){
-  const sel=$("#sel"); if(!sel) return;
-  const ms=await listarModelos();
-  sel.innerHTML='<option value="">— escolha —</option>'+ms.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join("");
-  if(state.model && ms.includes(state.model)) sel.value=state.model;
-  else if(ms.length){ sel.value=ms[0]; state.model=ms[0]; save(); }
-  if(ms.length) $("#dot").className="dot on";
-}
-function renderAjustes(){
-  const p=$("#pane");
-  p.innerHTML=
-   `<div class="card">
-      <h3>System prompt</h3>
-      <p class="muted">É o seu modelo, na sua máquina: o prompt de sistema é inteiramente seu.
-      Vazio = nenhuma persona imposta.</p>
-      <textarea class="f" id="sys" placeholder="ex: responda sempre em português, de forma direta">${esc(state.system)}</textarea>
-      <div class="row" style="margin-top:8px">
-        <button class="g" data-s="">Neutro (vazio)</button>
-        <button class="g" data-s="Você é um assistente direto e preciso. Responda em português.">Direto</button>
-      </div>
-      <div class="row" style="margin-top:6px">
-        <button class="g" data-s="Você é um programador sênior. Mostre código completo e explique decisões.">Programador</button>
-        <button class="g" data-s="Você é um professor paciente. Explique passo a passo com exemplos.">Professor</button>
-      </div>
-    </div>
-    <div class="card">
-      <h3>Amostragem</h3>
-      <label>Temperatura <b id="vTemp"></b></label>
-      <input type="range" id="temp" min="0" max="2" step="0.05">
-      <label>top_p <b id="vTopP"></b></label>
-      <input type="range" id="topp" min="0" max="1" step="0.05">
-      <label>top_k <b id="vTopK"></b></label>
-      <input type="range" id="topk" min="0" max="200" step="1">
-      <label>repeat_penalty <b id="vRep"></b></label>
-      <input type="range" id="rep" min="1" max="2" step="0.05">
-      <label>Contexto (num_ctx) <b id="vCtx"></b></label>
-      <input type="range" id="ctx" min="512" max="131072" step="512">
-      <label>Máx. tokens (-1 = sem limite)</label>
-      <input type="number" id="max">
-    </div>
-    <div class="card">
-      <h3>Estado</h3>
-      <div class="kv"><span>Endpoint</span><b>${esc(state.ep||"—")}</b></div>
-      <div class="kv"><span>Protocolo</span><b>${esc(state.kind)}</b></div>
-      <div class="kv"><span>Modelo</span><b>${esc(state.model||"—")}</b></div>
-      <div class="kv"><span>Conversas</span><b>${state.convs.length}</b></div>
-      <p class="muted" style="margin-top:10px">Tudo em localStorage. Nenhum dado sai deste navegador
-      exceto para o endpoint que você configurou.</p>
-    </div>`;
-  const P=state.p;
-  const lig=(id,vid,fmt)=>{ const el=$("#"+id), v=$("#"+vid);
-    el.value=P[id==="topp"?"top_p":id==="topk"?"top_k":id];
-    v.textContent=fmt? fmt(el.value) : el.value;
-    el.oninput=()=>{ P[id==="topp"?"top_p":id==="topk"?"top_k":id]=parseFloat(el.value);
-      v.textContent=fmt? fmt(el.value):el.value; save(); }; };
-  lig("temp","vTemp"); lig("topp","vTopP"); lig("topk","vTopK"); lig("rep","vRep");
-  const ctx=$("#ctx"); ctx.value=P.num_ctx; $("#vCtx").textContent=P.num_ctx;
-  ctx.oninput=()=>{ P.num_ctx=parseInt(ctx.value); $("#vCtx").textContent=ctx.value; save(); };
-  $("#max").value=P.max_tokens; $("#max").oninput=e=>{ P.max_tokens=parseInt(e.target.value)||-1; save(); };
-  $("#sys").oninput=e=>{ state.system=e.target.value; save(); };
-  document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{
-    state.system=b.dataset.s; save(); $("#sys").value=state.system; toast("system prompt definido");
-  });
-}
-async function renderDiag(){
-  const p=$("#pane");
-  p.innerHTML=`<div class="card"><h3>Testando endpoints locais…</h3>
-    <div id="dlist"></div>
-    <p class="muted" style="margin-top:10px">Este teste roda no SEU navegador.
-    "bloqueado" quase sempre é CORS, não servidor fora do ar.</p></div>
-    <div class="card"><h3>Como rodar um modelo</h3>
-      <p class="muted">
-      <b>Ollama</b> (mais simples):<br>
-      <code>ollama pull llama3.2</code><br>
-      <code>OLLAMA_ORIGINS=* ollama serve</code><br><br>
-      <b>LM Studio</b> (interface gráfica): baixe um modelo, abra o
-      "Local Server" na porta 1234.<br><br>
-      <b>Modelos sem filtro de terceiro</b>: qualquer peso aberto que você
-      baixar (Llama, Mistral, Qwen, Gemma…) roda igual aqui. A liberdade vem
-      de você possuir os pesos — não de burlar nada.
-      </p>
-    </div>
-    <div class="card warnbox">
-      <b>Limite honesto:</b> isto não remove alinhamento que venha do
-      próprio treinamento do modelo. Um modelo treinado para recusar certas
-      coisas pode continuar recusando — isso é propriedade dos pesos, não
-      desta interface. O que este app garante é que <b>nenhuma empresa</b> fica
-      entre você e o modelo, e que o system prompt é inteiramente seu.
-    </div>`;
-  const box=$("#dlist");
-  for(const pr of PRESETS){
-    const d=document.createElement("div"); d.className="kv";
-    d.innerHTML=`<span>${esc(pr.nm)} <span class="muted">${esc(pr.base)}</span></span><b>…</b>`;
-    box.appendChild(d);
-    const r=await ping(pr.base, pr.models, 2500);
-    const b=d.querySelector("b");
-    b.textContent = r.ok ? ("HTTP "+r.code) : (r.code?("HTTP "+r.code):(r.err||"falhou"));
-    b.style.color = r.ok ? "var(--ok)" : "var(--err)";
-  }
+  bubble("", "**SkynetChat** — 50 ferramentas reais, um arquivo só.\n\n"+
+    "Uso dados reais de APIs públicas quando dá, e converso por modelo de linguagem quando há chave.\n\n"+
+    "Tente: `clima em Lisboa`, `bitcoin`, `dólar`, `wikipédia fotossíntese`, `hacker news`.\n"+
+    "Ou matemática e conversão: `2+2*10`, `100 km para mi`.\n\n"+
+    "Abra **Ferramentas** para ver tudo, e **Status → Testar todas** para descobrir quais funcionam aqui.");
 }
 
-/* ------------------------------------------------------------- EVENTOS */
+/* ============================================================== VOZ */
+let rec=null;
+function voz(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ toast("Reconhecimento de voz não suportado"); return; }
+  if(rec){ rec.stop(); rec=null; $("#btnVoice").textContent="🎤"; return; }
+  rec=new SR(); rec.lang="pt-BR"; rec.interimResults=false; rec.maxAlternatives=1;
+  $("#btnVoice").textContent="🔴";
+  rec.onresult=e=>{ txt.value=e.results[0][0].transcript; enviar(); };
+  rec.onerror=()=>{ toast("Voz: erro"); };
+  rec.onend=()=>{ rec=null; $("#btnVoice").textContent="🎤"; };
+  rec.start();
+}
+function falar(t){
+  if(!state.voice || !window.speechSynthesis) return;
+  const u=new SpeechSynthesisUtterance(t.replace(/[*`#>]/g,"").slice(0,600));
+  u.lang="pt-BR"; speechSynthesis.speak(u);
+}
+
+/* ============================================================== EVENTOS */
 $("#send").onclick=enviar;
-$("#bNew").onclick=()=>{ state.convs.push([]); state.conv=state.convs.length-1; save(); navTo("chat"); toast("nova conversa"); };
-$("#bMenu").onclick=()=>{ const n=$("#nav"); n.style.display = n.style.display==="flex" ? "none" : "flex"; };
-txt.addEventListener("input",()=>{ txt.style.height="auto"; txt.style.height=Math.min(txt.scrollHeight,130)+"px"; });
+$("#btnNew").onclick=()=>{ state.msgs=[]; save(); const c=chat(); if(c) c.innerHTML=""; boasVindas(); };
+$("#btnMenu").onclick=()=>{ const n=$("#nav"); n.style.display = n.style.display==="flex" ? "none" : "flex"; };
+$("#btnVoice").onclick=voz;
+$("#btnStop").onclick=()=>{ if(speechSynthesis) speechSynthesis.cancel(); toast("Voz parada"); };
+txt.addEventListener("input",()=>{ txt.style.height="auto"; txt.style.height=Math.min(txt.scrollHeight,120)+"px"; });
 txt.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); enviar(); } });
-document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>navTo(b.dataset.t));
-if(state.ep) ping(state.ep, state.kind==="ollama"?"/api/tags":"/v1/models")
-  .then(r=>$("#dot").className = r.ok? "dot on":"dot");
-navTo("chat");
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>navTo(b.dataset.tab));
+window.addEventListener("online",()=>$("#net").classList.add("on"));
+window.addEventListener("offline",()=>$("#net").classList.remove("on"));
+$("#net").classList.toggle("on", navigator.onLine);
+document.addEventListener("visibilitychange",()=>save());
 
-window.Skynet = {state, PRESETS, ping, md, esc, streamOpenAI, streamOllama, save};
+// init
+$("#nav").style.display="flex";
+navTo("chat");
+window.Skynet = {state, API, testarTudo, usarFerramenta, detectar, localTool, md, esc, extrairArgs, PROVIDERS, testar};
 </script>
 </body>
 </html>
