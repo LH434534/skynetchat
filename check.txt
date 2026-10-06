@@ -1,0 +1,8 @@
+url: https://lh434534.github.io/skynetchat/
+  / -> 200 (26352 bytes)
+  /index.html -> 200 (26352 bytes)
+  /.nojekyll -> 200 (0 bytes)
+--- titulo ---
+<title>SkynetChat — IA local, sem intermediário</title>
+--- presets no catalogo ---
+7
